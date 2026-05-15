@@ -251,21 +251,19 @@ function UploadArea({
             alert(`Upload failed: ${uploadError.message}`);
           }}
           appearance={{
-  container: "!w-full",
-  button:
-    "!w-full !rounded-full !bg-white !px-6 !py-4 !text-base !font-bold !text-black hover:!bg-white/90",
-  allowedContent: "!hidden",
-}}
-content={{
-  button({ isUploading }) {
-    return isUploading
-      ? "Uploading..."
-      : "Tap to upload images";
-  },
-  allowedContent() {
-    return "";
-  },
-}}
+            container: "!w-full !max-w-full !overflow-hidden",
+            button:
+              "!w-full !max-w-full !rounded-full !bg-white !px-6 !py-4 !text-base !font-bold !text-black",
+            allowedContent: "!hidden",
+          }}
+          content={{
+            button({ isUploading }) {
+              return isUploading ? "Uploading..." : "Tap to upload images";
+            },
+            allowedContent() {
+              return "";
+            },
+          }}
         />
       </div>
     </div>
