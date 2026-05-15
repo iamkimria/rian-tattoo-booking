@@ -227,16 +227,24 @@ function UploadedList({
 
 function UploadArea({
   label,
+  helperText,
   onUpload,
 }: {
   label: string;
+  helperText?: string;
   onUpload: (urls: string[]) => void;
 }) {
   return (
     <div>
       <label className={labelClass}>{label}</label>
 
-      <div className="rounded-2xl border border-dashed border-white/30 bg-black/30 p-5 text-center">
+      {helperText && (
+        <p className="mb-3 text-sm font-medium leading-relaxed text-white/55">
+          {helperText}
+        </p>
+      )}
+
+      <div className="rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-8 text-center transition hover:border-white/60 hover:bg-white/10">
         <UploadButton<OurFileRouter, "imageUploader">
           endpoint="imageUploader"
           onClientUploadComplete={(res) => {
@@ -251,17 +259,19 @@ function UploadArea({
             alert(`Upload failed: ${uploadError.message}`);
           }}
           appearance={{
-            container: "!w-full !max-w-full !overflow-hidden",
+            container: "!w-full !max-w-full !border-0 !bg-transparent !p-0",
             button:
-              "!w-full !max-w-full !rounded-full !bg-white !px-6 !py-4 !text-base !font-bold !text-black",
-            allowedContent: "!hidden",
+              "!w-full !max-w-full !bg-transparent !px-3 !py-2 !text-center !text-base !font-semibold !text-white !shadow-none hover:!bg-transparent",
+            allowedContent: "!mt-3 !text-sm !text-white/55",
           }}
           content={{
             button({ isUploading }) {
-              return isUploading ? "Uploading..." : "Tap to upload images";
+              return isUploading
+                ? "Uploading..."
+                : "☁️ Tap to upload images";
             },
             allowedContent() {
-              return "";
+              return "Images up to 8MB";
             },
           }}
         />
@@ -478,11 +488,12 @@ export default function Home() {
 
               <div className="mt-7">
                 <UploadArea
-                  label="PHOTO OF THE TATTOO AREA *"
-                  onUpload={(urls) => {
-                    setPlacementPhotoUrl(urls[0]);
-                  }}
-                />
+  label="PHOTO OF THE TATTOO AREA *"
+  helperText="Images up to 8MB. If your photo is too large, taking a screenshot of it usually makes it easier to upload."
+  onUpload={(urls) => {
+    setPlacementPhotoUrl(urls[0]);
+  }}
+/>
 
                 <UploadedList
                   title="UPLOADED PLACEMENT PHOTO"
@@ -513,11 +524,12 @@ export default function Home() {
 
             <div>
               <UploadArea
-                label="DESIGN REFERENCES *"
-                onUpload={(urls) => {
-                  setReferenceImageUrls((prev) => [...prev, ...urls]);
-                }}
-              />
+  label="DESIGN REFERENCES *"
+  helperText="Reference images, inspiration photos, existing tattoos, color palettes, or visual ideas are all welcome. Images up to 8MB each."
+  onUpload={(urls) => {
+    setReferenceImageUrls((prev) => [...prev, ...urls]);
+  }}
+/>
 
               <UploadedList
                 title="UPLOADED REFERENCES"
