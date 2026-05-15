@@ -30,16 +30,19 @@ function Field({
   name,
   type = "text",
   placeholder,
+  required = false,
 }: {
   label: string;
   name: string;
   type?: string;
   placeholder?: string;
+  required?: boolean;
 }) {
   return (
     <div>
       <label className={labelClass}>{label}</label>
       <input
+        required={required}
         name={name}
         type={type}
         placeholder={placeholder}
@@ -54,16 +57,19 @@ function TextArea({
   name,
   placeholder,
   rows = 3,
+  required = false,
 }: {
   label: string;
   name: string;
   placeholder: string;
   rows?: number;
+  required?: boolean;
 }) {
   return (
     <div>
       <label className={labelClass}>{label}</label>
       <textarea
+        required={required}
         name={name}
         rows={rows}
         placeholder={placeholder}
@@ -84,7 +90,7 @@ function DateOfBirthField() {
       <label className={labelClass}>DATE OF BIRTH *</label>
 
       <div className="grid grid-cols-3 gap-3">
-        <select name="birthDay" className={inputClass} defaultValue="">
+        <select required name="birthDay" className={inputClass} defaultValue="">
           <option value="" disabled>
             DD
           </option>
@@ -95,7 +101,12 @@ function DateOfBirthField() {
           ))}
         </select>
 
-        <select name="birthMonth" className={inputClass} defaultValue="">
+        <select
+          required
+          name="birthMonth"
+          className={inputClass}
+          defaultValue=""
+        >
           <option value="" disabled>
             MM
           </option>
@@ -106,7 +117,7 @@ function DateOfBirthField() {
           ))}
         </select>
 
-        <select name="birthYear" className={inputClass} defaultValue="">
+        <select required name="birthYear" className={inputClass} defaultValue="">
           <option value="" disabled>
             YYYY
           </option>
@@ -128,6 +139,7 @@ function PreferredSlot({
   ampmName,
   selectedDate,
   onDateChange,
+  required = false,
 }: {
   number: string;
   dateName: string;
@@ -135,6 +147,7 @@ function PreferredSlot({
   ampmName: string;
   selectedDate: Date | null;
   onDateChange: (date: Date | null) => void;
+  required?: boolean;
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-black/25 p-5">
@@ -161,13 +174,19 @@ function PreferredSlot({
         </div>
 
         <input
+          required={required}
           name={timeName}
           type="text"
           placeholder="00:00"
           className={smallInputClass}
         />
 
-        <select name={ampmName} className={smallInputClass} defaultValue="">
+        <select
+          required={required}
+          name={ampmName}
+          className={smallInputClass}
+          defaultValue=""
+        >
           <option value="" disabled>
             AM / PM
           </option>
@@ -266,9 +285,7 @@ function UploadArea({
           }}
           content={{
             button({ isUploading }) {
-              return isUploading
-                ? "Uploading..."
-                : "☁️ Tap to upload images";
+              return isUploading ? "Uploading..." : "☁️ Tap to upload images";
             },
             allowedContent() {
               return "Images up to 8MB";
@@ -295,13 +312,54 @@ export default function Home() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
+    if (!firstDate) {
+      alert("Please select at least your 1st preferred date.");
+      return;
+    }
+
+    if (!placementPhotoUrl) {
+      alert("Please upload a photo of the tattoo area.");
+      return;
+    }
+
+    if (referenceImageUrls.length === 0) {
+      alert("Please upload at least one design reference image.");
+      return;
+    }
+
     setLoading(true);
     setSuccess(false);
     setError(false);
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+const requiredFields = [
+  "firstName",
+  "lastName",
+  "birthDay",
+  "birthMonth",
+  "birthYear",
+  "phone",
+  "email",
+  "currentCity",
+  "firstDate",
+  "firstTime",
+  "firstAmPm",
+  "placement",
+  "expectedSize",
+  "designDescription",
+  "legalAge",
+];
 
+for (const field of requiredFields) {
+  const value = formData.get(field);
+
+  if (!value) {
+    alert("Please fill out all required fields before submitting.");
+    setLoading(false);
+    return;
+  }
+}
     const response = await fetch("/api/booking", {
       method: "POST",
       body: formData,
@@ -403,12 +461,14 @@ export default function Home() {
           <form onSubmit={handleSubmit} className="space-y-7">
             <div className="grid gap-7 md:grid-cols-2">
               <Field
+                required
                 label="FIRST NAME *"
                 name="firstName"
                 placeholder="First name"
               />
 
               <Field
+                required
                 label="LAST NAME *"
                 name="lastName"
                 placeholder="Last name"
@@ -417,12 +477,14 @@ export default function Home() {
               <DateOfBirthField />
 
               <Field
+                required
                 label="PHONE NUMBER *"
                 name="phone"
                 placeholder="+49 / +31 / +82 ..."
               />
 
               <Field
+                required
                 label="E-MAIL *"
                 name="email"
                 type="email"
@@ -436,6 +498,7 @@ export default function Home() {
               />
 
               <Field
+                required
                 label="CURRENT CITY *"
                 name="currentCity"
                 placeholder="Berlin, Amsterdam, Seoul..."
@@ -451,6 +514,7 @@ export default function Home() {
 
               <div className="space-y-4">
                 <PreferredSlot
+                  required
                   number="1ST"
                   dateName="firstDate"
                   timeName="firstTime"
@@ -481,6 +545,7 @@ export default function Home() {
 
             <div className="rounded-3xl border border-white/20 bg-white/10 p-6">
               <TextArea
+                required
                 label="WHERE WOULD YOU LIKE TO GET TATTOOED? *"
                 name="placement"
                 placeholder="Example: inner forearm, upper arm, ankle..."
@@ -488,12 +553,12 @@ export default function Home() {
 
               <div className="mt-7">
                 <UploadArea
-  label="PHOTO OF THE TATTOO AREA *"
-  helperText="Images up to 8MB. If your photo is too large, taking a screenshot of it usually makes it easier to upload."
-  onUpload={(urls) => {
-    setPlacementPhotoUrl(urls[0]);
-  }}
-/>
+                  label="PHOTO OF THE TATTOO AREA *"
+                  helperText="Images up to 8MB. If your photo is too large, taking a screenshot of it usually makes it easier to upload."
+                  onUpload={(urls) => {
+                    setPlacementPhotoUrl(urls[0]);
+                  }}
+                />
 
                 <UploadedList
                   title="UPLOADED PLACEMENT PHOTO"
@@ -510,12 +575,14 @@ export default function Home() {
             </div>
 
             <Field
+              required
               label="EXPECTED SIZE *"
               name="expectedSize"
               placeholder="Example: 10cm, 15cm, palm size..."
             />
 
             <TextArea
+              required
               label="DESIGN DESCRIPTION *"
               name="designDescription"
               rows={5}
@@ -524,12 +591,12 @@ export default function Home() {
 
             <div>
               <UploadArea
-  label="DESIGN REFERENCES *"
-  helperText="Reference images, inspiration photos, existing tattoos, color palettes, or visual ideas are all welcome. Images up to 8MB each."
-  onUpload={(urls) => {
-    setReferenceImageUrls((prev) => [...prev, ...urls]);
-  }}
-/>
+                label="DESIGN REFERENCES *"
+                helperText="Reference images, inspiration photos, existing tattoos, color palettes, or visual ideas are all welcome. Images up to 8MB each."
+                onUpload={(urls) => {
+                  setReferenceImageUrls((prev) => [...prev, ...urls]);
+                }}
+              />
 
               <UploadedList
                 title="UPLOADED REFERENCES"
@@ -550,6 +617,7 @@ export default function Home() {
 
             <label className="flex gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 text-lg font-medium leading-relaxed text-white/85">
               <input
+                required
                 name="legalAge"
                 value="yes"
                 type="checkbox"
