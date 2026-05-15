@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { UploadDropzone } from "@uploadthing/react";
+import { UploadButton } from "@uploadthing/react";
 import type { OurFileRouter } from "./api/uploadthing/core";
 
 const inputClass =
@@ -236,35 +236,40 @@ function UploadArea({
     <div>
       <label className={labelClass}>{label}</label>
 
-      <UploadDropzone<OurFileRouter, "imageUploader">
-        endpoint="imageUploader"
-        onClientUploadComplete={(res) => {
-          const urls =
-            res?.map((file) => getUploadUrl(file)).filter(Boolean) || [];
+      <div className="rounded-2xl border border-dashed border-white/30 bg-black/30 p-5 text-center">
+        <UploadButton<OurFileRouter, "imageUploader">
+          endpoint="imageUploader"
+          onClientUploadComplete={(res) => {
+            const urls =
+              res?.map((file) => getUploadUrl(file)).filter(Boolean) || [];
 
-          if (urls.length > 0) {
-            onUpload(urls);
-          }
-        }}
-        onUploadError={(uploadError: Error) => {
-          alert(`Upload failed: ${uploadError.message}`);
-        }}
-        appearance={{
-          container:
-            "w-full max-w-full rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-8 text-center md:px-6 md:py-10",
-          button:
-            "!max-w-full !whitespace-normal !break-words !bg-white !text-black !font-bold !rounded-full !px-6 !py-3 !text-sm md:!text-base",
-          allowedContent: "!text-white/60 !text-sm md:!text-base",
-        }}
-        content={{
-          button({ isUploading }) {
-            return isUploading ? "Uploading..." : "Choose File(s)";
-          },
-          allowedContent() {
-            return "Images up to 8MB, max 10";
-          },
-        }}
-      />
+            if (urls.length > 0) {
+              onUpload(urls);
+            }
+          }}
+          onUploadError={(uploadError: Error) => {
+            alert(`Upload failed: ${uploadError.message}`);
+          }}
+          appearance={{
+            button:
+              "!h-auto !w-full !max-w-full !rounded-2xl !bg-white !px-5 !py-4 !text-center !text-base !font-bold !text-black hover:!bg-white/90",
+            allowedContent:
+              "!mt-3 !text-center !text-sm !text-white/60",
+            container:
+              "!w-full !max-w-full !border-0 !bg-transparent !p-0",
+          }}
+          content={{
+            button({ isUploading }) {
+              return isUploading
+                ? "Uploading..."
+                : "Tap here to upload images";
+            },
+            allowedContent() {
+              return "Images up to 8MB";
+            },
+          }}
+        />
+      </div>
     </div>
   );
 }
