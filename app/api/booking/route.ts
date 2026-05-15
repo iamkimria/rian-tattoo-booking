@@ -89,7 +89,7 @@ export async function POST(request: Request) {
     const legalAge = safeText(formData.get("legalAge"));
 
     await resend.emails.send({
-      from: "RI:AN Booking <onboarding@resend.dev>",
+     from: "onboarding@resend.dev",
       to: "iamkimria@gmail.com",
       subject: `New tattoo booking request from ${firstName} ${lastName}`,
       html: `
@@ -171,7 +171,7 @@ export async function POST(request: Request) {
         </p>
       `,
     });
-
+console.log("CLIENT EMAIL:", email);
     if (email) {
       await resend.emails.send({
         from: "RI:AN Booking <onboarding@resend.dev>",
