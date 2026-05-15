@@ -2,14 +2,15 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+const FROM_EMAIL = "RI:AN Booking <booking@riantattoo.com>";
+const OWNER_EMAIL = "iamkimria@gmail.com";
+
 function safeText(value: FormDataEntryValue | null) {
   return value ? String(value) : "";
 }
 
 function formatLinks(urls: string[]) {
-  if (!urls.length) {
-    return "<p>No reference images uploaded.</p>";
-  }
+  if (!urls.length) return "<p>No reference images uploaded.</p>";
 
   return `
     <ul>
@@ -17,9 +18,7 @@ function formatLinks(urls: string[]) {
         .map(
           (url, index) => `
             <li>
-              <a href="${url}" target="_blank">
-                Reference Image ${index + 1}
-              </a>
+              <a href="${url}" target="_blank">Reference Image ${index + 1}</a>
               <br />
               ${url}
             </li>
@@ -60,27 +59,17 @@ export async function POST(request: Request) {
 
     const placement = safeText(formData.get("placement"));
     const expectedSize = safeText(formData.get("expectedSize"));
-    const designDescription = safeText(
-      formData.get("designDescription")
-    );
+    const designDescription = safeText(formData.get("designDescription"));
 
-    const placementPhotoUrl = safeText(
-      formData.get("placementPhotoUrl")
-    );
-
-    const referenceImageUrlsRaw = safeText(
-      formData.get("referenceImageUrls")
-    );
+    const placementPhotoUrl = safeText(formData.get("placementPhotoUrl"));
+    const referenceImageUrlsRaw = safeText(formData.get("referenceImageUrls"));
 
     let referenceImageUrls: string[] = [];
 
     try {
       const parsed = JSON.parse(referenceImageUrlsRaw || "[]");
-
       if (Array.isArray(parsed)) {
-        referenceImageUrls = parsed.filter(
-          (url) => typeof url === "string"
-        );
+        referenceImageUrls = parsed.filter((url) => typeof url === "string");
       }
     } catch {
       referenceImageUrls = [];
@@ -89,70 +78,40 @@ export async function POST(request: Request) {
     const legalAge = safeText(formData.get("legalAge"));
 
     await resend.emails.send({
-     from: "onboarding@resend.dev",
-      to: "iamkimria@gmail.com",
+      from: FROM_EMAIL,
+      to: OWNER_EMAIL,
       subject: `New tattoo booking request from ${firstName} ${lastName}`,
       html: `
         <h1>New Tattoo Booking Request</h1>
 
         <h2>Client Info</h2>
-
         <p><b>Name:</b> ${firstName} ${lastName}</p>
-
-        <p>
-          <b>Date of Birth:</b>
-          ${birthDay}/${birthMonth}/${birthYear}
-        </p>
-
+        <p><b>Date of Birth:</b> ${birthDay}/${birthMonth}/${birthYear}</p>
         <p><b>Phone:</b> ${phone}</p>
-
         <p><b>Email:</b> ${email}</p>
-
         <p><b>Instagram:</b> ${instagram}</p>
-
         <p><b>Current City:</b> ${currentCity}</p>
 
         <h2>Preferred Date & Time</h2>
-
-        <p>
-          <b>1st:</b>
-          ${firstDate} ${firstTime} ${firstAmPm}
-        </p>
-
-        <p>
-          <b>2nd:</b>
-          ${secondDate} ${secondTime} ${secondAmPm}
-        </p>
-
-        <p>
-          <b>3rd:</b>
-          ${thirdDate} ${thirdTime} ${thirdAmPm}
-        </p>
+        <p><b>1st:</b> ${firstDate} ${firstTime} ${firstAmPm}</p>
+        <p><b>2nd:</b> ${secondDate} ${secondTime} ${secondAmPm}</p>
+        <p><b>3rd:</b> ${thirdDate} ${thirdTime} ${thirdAmPm}</p>
 
         <h2>Tattoo Details</h2>
-
         <p><b>Placement:</b> ${placement}</p>
-
         <p><b>Expected Size:</b> ${expectedSize}</p>
-
         <p><b>Design Description:</b></p>
-
         <p>${designDescription}</p>
 
         <h2>Uploaded Images</h2>
 
         <p><b>Placement Photo:</b></p>
-
         ${
           placementPhotoUrl
             ? `
               <p>
-                <a href="${placementPhotoUrl}" target="_blank">
-                  Open Placement Photo
-                </a>
-
+                <a href="${placementPhotoUrl}" target="_blank">Open Placement Photo</a>
                 <br />
-
                 ${placementPhotoUrl}
               </p>
             `
@@ -160,24 +119,18 @@ export async function POST(request: Request) {
         }
 
         <p><b>Reference Images:</b></p>
-
         ${formatLinks(referenceImageUrls)}
 
         <h2>Confirmation</h2>
-
-        <p>
-          <b>Legal Age Confirmed:</b>
-          ${legalAge ? "Yes" : "No"}
-        </p>
+        <p><b>Legal Age Confirmed:</b> ${legalAge ? "Yes" : "No"}</p>
       `,
     });
-console.log("CLIENT EMAIL:", email);
+
     if (email) {
       await resend.emails.send({
-        from: "RI:AN Booking <onboarding@resend.dev>",
+        from: FROM_EMAIL,
         to: email,
-        subject:
-          "Your RI:AN tattoo booking request has been received",
+        subject: "Your RI:AN tattoo booking request has been received",
         html: `
           <h1>Thank you for your booking request.</h1>
 
