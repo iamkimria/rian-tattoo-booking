@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { UploadButton } from "@uploadthing/react";
+import { UploadDropzone } from "@uploadthing/react";
 import type { OurFileRouter } from "./api/uploadthing/core";
 
 const inputClass =
@@ -14,6 +14,16 @@ const smallInputClass =
 
 const labelClass =
   "mb-3 block text-base font-bold tracking-[0.08em] text-white/90";
+
+function getUploadUrl(file: any) {
+  return (
+    file?.ufsUrl ||
+    file?.url ||
+    file?.appUrl ||
+    file?.serverData?.uploadedFileUrl ||
+    ""
+  );
+}
 
 function Field({
   label,
@@ -168,15 +178,7 @@ function PreferredSlot({
     </div>
   );
 }
-function getUploadUrl(file: any) {
-  return (
-    file?.ufsUrl ||
-    file?.url ||
-    file?.appUrl ||
-    file?.serverData?.uploadedFileUrl ||
-    ""
-  );
-}
+
 function UploadedList({
   title,
   urls,
@@ -219,6 +221,50 @@ function UploadedList({
           </li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function UploadArea({
+  label,
+  onUpload,
+}: {
+  label: string;
+  onUpload: (urls: string[]) => void;
+}) {
+  return (
+    <div>
+      <label className={labelClass}>{label}</label>
+
+      <UploadDropzone<OurFileRouter, "imageUploader">
+        endpoint="imageUploader"
+        onClientUploadComplete={(res) => {
+          const urls =
+            res?.map((file) => getUploadUrl(file)).filter(Boolean) || [];
+
+          if (urls.length > 0) {
+            onUpload(urls);
+          }
+        }}
+        onUploadError={(uploadError: Error) => {
+          alert(`Upload failed: ${uploadError.message}`);
+        }}
+        appearance={{
+          container:
+            "w-full max-w-full rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-8 text-center md:px-6 md:py-10",
+          button:
+            "!max-w-full !whitespace-normal !break-words !bg-white !text-black !font-bold !rounded-full !px-6 !py-3 !text-sm md:!text-base",
+          allowedContent: "!text-white/60 !text-sm md:!text-base",
+        }}
+        content={{
+          button({ isUploading }) {
+            return isUploading ? "Uploading..." : "Choose File(s)";
+          },
+          allowedContent() {
+            return "Images up to 8MB, max 10";
+          },
+        }}
+      />
     </div>
   );
 }
@@ -430,37 +476,10 @@ export default function Home() {
               />
 
               <div className="mt-7">
-                <label className={labelClass}>PHOTO OF THE TATTOO AREA *</label>
-
-                <UploadButton<OurFileRouter, "imageUploader">
-                  endpoint="imageUploader"
-                  onClientUploadComplete={(res) => {
-
-  const file = res?.[0] as any;
-
-  const uploadedUrl =
-
-    file?.ufsUrl ||
-
-    file?.url ||
-
-    file?.serverData?.uploadedFileUrl;
-
-  if (uploadedUrl) {
-
-    setPlacementPhotoUrl(uploadedUrl);
-
-  }
-                  }}
-                  onUploadError={(uploadError: Error) => {
-                    alert(`Upload failed: ${uploadError.message}`);
-                  }}
-                  appearance={{
-  button:
-  "!max-w-full !whitespace-normal !break-words !text-center !text-black !bg-white font-bold px-5 py-3 rounded-full",
-                    container:
-  "w-full max-w-full overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-6 text-center md:px-6 md:py-10",
-                    allowedContent: "text-white/60",
+                <UploadArea
+                  label="PHOTO OF THE TATTOO AREA *"
+                  onUpload={(urls) => {
+                    setPlacementPhotoUrl(urls[0]);
                   }}
                 />
 
@@ -492,39 +511,10 @@ export default function Home() {
             />
 
             <div>
-              <label className={labelClass}>DESIGN REFERENCES *</label>
-
-              <UploadButton<OurFileRouter, "imageUploader">
-                endpoint="imageUploader"
-                onClientUploadComplete={(res) => {
-                 const urls =
-
-  res?.map((file) => {
-
-    const uploadedFile = file as any;
-
-    return (
-
-      uploadedFile?.ufsUrl ||
-
-      uploadedFile?.url ||
-
-      uploadedFile?.serverData?.uploadedFileUrl
-
-    );
-
-  }).filter(Boolean) || [];
+              <UploadArea
+                label="DESIGN REFERENCES *"
+                onUpload={(urls) => {
                   setReferenceImageUrls((prev) => [...prev, ...urls]);
-                }}
-                onUploadError={(uploadError: Error) => {
-                  alert(`Upload failed: ${uploadError.message}`);
-                }}
-                appearance={{
-  button:
-  "!max-w-full !whitespace-normal !break-words !text-center !text-black !bg-white font-bold px-5 py-3 rounded-full",
-                  container:
-  "w-full max-w-full overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-6 text-center md:px-6 md:py-10",
-                  allowedContent: "text-white/60",
                 }}
               />
 
