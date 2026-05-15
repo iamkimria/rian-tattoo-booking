@@ -3,6 +3,8 @@
 import { useState } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { UploadButton } from "@uploadthing/react";
+import type { OurFileRouter } from "./api/uploadthing/core";
 
 const inputClass =
   "w-full rounded-2xl border border-white/20 bg-white/10 px-5 py-4 text-lg font-medium text-white outline-none transition placeholder:text-white/55 focus:border-white/50";
@@ -27,7 +29,12 @@ function Field({
   return (
     <div>
       <label className={labelClass}>{label}</label>
-      <input name={name} type={type} placeholder={placeholder} className={inputClass} />
+      <input
+        name={name}
+        type={type}
+        placeholder={placeholder}
+        className={inputClass}
+      />
     </div>
   );
 }
@@ -46,69 +53,21 @@ function TextArea({
   return (
     <div>
       <label className={labelClass}>{label}</label>
-      <textarea name={name} rows={rows} placeholder={placeholder} className={inputClass} />
-    </div>
-  );
-}
-
-function UploadBox({
-  title,
-  name,
-  description,
-  multiple = false,
-}: {
-  title: string;
-  name: string;
-  description: string;
-  multiple?: boolean;
-}) {
-  const [files, setFiles] = useState<File[]>([]);
-
-  return (
-    <div>
-      <label className={labelClass}>{title}</label>
-
-      <label className="block cursor-pointer rounded-2xl border border-dashed border-white/30 bg-black/30 px-6 py-10 text-center transition hover:border-white/60 hover:bg-white/10">
-        <input
-          name={name}
-          type="file"
-          multiple={multiple}
-          className="hidden"
-          onChange={(event) => {
-            setFiles(Array.from(event.target.files || []));
-          }}
-        />
-
-        <span className="block text-lg font-semibold text-white">
-          Click to upload
-        </span>
-
-        <span className="mt-3 block text-base font-medium text-white/60">
-          {description}
-        </span>
-      </label>
-
-      {files.length > 0 && (
-        <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4">
-          <p className="mb-2 text-sm font-bold tracking-[0.08em] text-white/70">
-            SELECTED FILES
-          </p>
-
-          <ul className="space-y-1 text-base font-medium text-white/85">
-            {files.map((file, index) => (
-              <li key={`${file.name}-${index}`}>• {file.name}</li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <textarea
+        name={name}
+        rows={rows}
+        placeholder={placeholder}
+        className={inputClass}
+      />
     </div>
   );
 }
 
 function DateOfBirthField() {
-  const years = Array.from({ length: 90 }, (_, i) => new Date().getFullYear() - i);
-  const months = Array.from({ length: 12 }, (_, i) => i + 1);
-  const days = Array.from({ length: 31 }, (_, i) => i + 1);
+  const currentYear = new Date().getFullYear();
+  const years = Array.from({ length: 90 }, (_, index) => currentYear - index);
+  const months = Array.from({ length: 12 }, (_, index) => index + 1);
+  const days = Array.from({ length: 31 }, (_, index) => index + 1);
 
   return (
     <div>
@@ -116,23 +75,35 @@ function DateOfBirthField() {
 
       <div className="grid grid-cols-3 gap-3">
         <select name="birthDay" className={inputClass} defaultValue="">
-          <option value="" disabled>DD</option>
+          <option value="" disabled>
+            DD
+          </option>
           {days.map((day) => (
-            <option key={day} value={day}>{day}</option>
+            <option key={day} value={day}>
+              {day}
+            </option>
           ))}
         </select>
 
         <select name="birthMonth" className={inputClass} defaultValue="">
-          <option value="" disabled>MM</option>
+          <option value="" disabled>
+            MM
+          </option>
           {months.map((month) => (
-            <option key={month} value={month}>{month}</option>
+            <option key={month} value={month}>
+              {month}
+            </option>
           ))}
         </select>
 
         <select name="birthYear" className={inputClass} defaultValue="">
-          <option value="" disabled>YYYY</option>
+          <option value="" disabled>
+            YYYY
+          </option>
           {years.map((year) => (
-            <option key={year} value={year}>{year}</option>
+            <option key={year} value={year}>
+              {year}
+            </option>
           ))}
         </select>
       </div>
@@ -197,12 +168,68 @@ function PreferredSlot({
     </div>
   );
 }
+function getUploadUrl(file: any) {
+  return (
+    file?.ufsUrl ||
+    file?.url ||
+    file?.appUrl ||
+    file?.serverData?.uploadedFileUrl ||
+    ""
+  );
+}
+function UploadedList({
+  title,
+  urls,
+  onRemove,
+}: {
+  title: string;
+  urls: string[];
+  onRemove: (index: number) => void;
+}) {
+  if (urls.length === 0) return null;
+
+  return (
+    <div className="mt-4 rounded-2xl border border-white/10 bg-black/30 p-4">
+      <p className="mb-3 text-sm font-bold tracking-[0.08em] text-white/70">
+        {title}
+      </p>
+
+      <ul className="space-y-3 text-sm text-white/80">
+        {urls.map((url, index) => (
+          <li
+            key={`${url}-${index}`}
+            className="flex items-center justify-between gap-3 rounded-xl bg-white/5 px-4 py-3"
+          >
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="truncate underline underline-offset-4"
+            >
+              Uploaded file {index + 1}
+            </a>
+
+            <button
+              type="button"
+              onClick={() => onRemove(index)}
+              className="shrink-0 rounded-full border border-white/20 px-3 py-1 text-xs font-bold text-white/80 transition hover:bg-white/10"
+            >
+              REMOVE
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function Home() {
-  const [dateOfBirth, setDateOfBirth] = useState<Date | null>(null);
   const [firstDate, setFirstDate] = useState<Date | null>(null);
   const [secondDate, setSecondDate] = useState<Date | null>(null);
   const [thirdDate, setThirdDate] = useState<Date | null>(null);
+
+  const [placementPhotoUrl, setPlacementPhotoUrl] = useState("");
+  const [referenceImageUrls, setReferenceImageUrls] = useState<string[]>([]);
 
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -228,10 +255,11 @@ export default function Home() {
     if (response.ok) {
       setSuccess(true);
       form.reset();
-      setDateOfBirth(null);
       setFirstDate(null);
       setSecondDate(null);
       setThirdDate(null);
+      setPlacementPhotoUrl("");
+      setReferenceImageUrls([]);
     } else {
       setError(true);
     }
@@ -262,7 +290,8 @@ export default function Home() {
           </h1>
 
           <p className="mb-10 text-xl font-medium leading-relaxed text-white/90 md:text-2xl">
-            Delicate watercolor tattoos inspired by emotion, movement, and flowing color.
+            Delicate watercolor tattoos inspired by emotion, movement, and
+            flowing color.
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -297,7 +326,8 @@ export default function Home() {
             </h2>
 
             <p className="mx-auto max-w-2xl text-xl font-medium leading-relaxed text-white/85">
-              Please fill out this form carefully. I’ll get back to you as soon as possible.
+              Please fill out this form carefully. I’ll get back to you as soon
+              as possible.
             </p>
 
             <div className="mt-8 text-center">
@@ -315,15 +345,44 @@ export default function Home() {
 
           <form onSubmit={handleSubmit} className="space-y-7">
             <div className="grid gap-7 md:grid-cols-2">
-              <Field label="FIRST NAME *" name="firstName" placeholder="First name" />
-              <Field label="LAST NAME *" name="lastName" placeholder="Last name" />
+              <Field
+                label="FIRST NAME *"
+                name="firstName"
+                placeholder="First name"
+              />
+
+              <Field
+                label="LAST NAME *"
+                name="lastName"
+                placeholder="Last name"
+              />
 
               <DateOfBirthField />
 
-              <Field label="PHONE NUMBER *" name="phone" placeholder="+49 / +31 / +82 ..." />
-              <Field label="E-MAIL *" name="email" type="email" placeholder="your@email.com" />
-              <Field label="INSTAGRAM" name="instagram" placeholder="@username" />
-              <Field label="CURRENT CITY *" name="currentCity" placeholder="Berlin, Amsterdam, Seoul..." />
+              <Field
+                label="PHONE NUMBER *"
+                name="phone"
+                placeholder="+49 / +31 / +82 ..."
+              />
+
+              <Field
+                label="E-MAIL *"
+                name="email"
+                type="email"
+                placeholder="your@email.com"
+              />
+
+              <Field
+                label="INSTAGRAM"
+                name="instagram"
+                placeholder="@username"
+              />
+
+              <Field
+                label="CURRENT CITY *"
+                name="currentCity"
+                placeholder="Berlin, Amsterdam, Seoul..."
+              />
             </div>
 
             <div className="rounded-3xl border border-white/20 bg-white/10 p-6">
@@ -371,10 +430,50 @@ export default function Home() {
               />
 
               <div className="mt-7">
-                <UploadBox
-                  title="PHOTO OF THE TATTOO AREA *"
-                  name="placementPhoto"
-                  description="Please upload a clear photo of the area where you want to get tattooed."
+                <label className={labelClass}>PHOTO OF THE TATTOO AREA *</label>
+
+                <UploadButton<OurFileRouter, "imageUploader">
+                  endpoint="imageUploader"
+                  onClientUploadComplete={(res) => {
+
+  const file = res?.[0] as any;
+
+  const uploadedUrl =
+
+    file?.ufsUrl ||
+
+    file?.url ||
+
+    file?.serverData?.uploadedFileUrl;
+
+  if (uploadedUrl) {
+
+    setPlacementPhotoUrl(uploadedUrl);
+
+  }
+                  }}
+                  onUploadError={(uploadError: Error) => {
+                    alert(`Upload failed: ${uploadError.message}`);
+                  }}
+                  appearance={{
+  button:
+    "ut-ready:bg-white ut-uploading:bg-white/70 text-black font-bold px-6 py-3 rounded-full",
+                    container:
+                      "rounded-2xl border border-dashed border-white/30 bg-black/30 px-6 py-10",
+                    allowedContent: "text-white/60",
+                  }}
+                />
+
+                <UploadedList
+                  title="UPLOADED PLACEMENT PHOTO"
+                  urls={placementPhotoUrl ? [placementPhotoUrl] : []}
+                  onRemove={() => setPlacementPhotoUrl("")}
+                />
+
+                <input
+                  type="hidden"
+                  name="placementPhotoUrl"
+                  value={placementPhotoUrl}
                 />
               </div>
             </div>
@@ -392,17 +491,71 @@ export default function Home() {
               placeholder="Please describe your tattoo idea, meaning, style, colors, and any important details."
             />
 
-            <UploadBox
-              title="DESIGN REFERENCES *"
-              name="referenceImages"
-              multiple
-              description="You can upload screenshots from my Instagram, artworks, colors, or anything that inspires you."
-            />
+            <div>
+              <label className={labelClass}>DESIGN REFERENCES *</label>
+
+              <UploadButton<OurFileRouter, "imageUploader">
+                endpoint="imageUploader"
+                onClientUploadComplete={(res) => {
+                 const urls =
+
+  res?.map((file) => {
+
+    const uploadedFile = file as any;
+
+    return (
+
+      uploadedFile?.ufsUrl ||
+
+      uploadedFile?.url ||
+
+      uploadedFile?.serverData?.uploadedFileUrl
+
+    );
+
+  }).filter(Boolean) || [];
+                  setReferenceImageUrls((prev) => [...prev, ...urls]);
+                }}
+                onUploadError={(uploadError: Error) => {
+                  alert(`Upload failed: ${uploadError.message}`);
+                }}
+                appearance={{
+  button:
+    "ut-ready:bg-white ut-uploading:bg-white/70 text-black font-bold px-6 py-3 rounded-full",
+                  container:
+                    "rounded-2xl border border-dashed border-white/30 bg-black/30 px-6 py-10",
+                  allowedContent: "text-white/60",
+                }}
+              />
+
+              <UploadedList
+                title="UPLOADED REFERENCES"
+                urls={referenceImageUrls}
+                onRemove={(index) => {
+                  setReferenceImageUrls((prev) =>
+                    prev.filter((_, itemIndex) => itemIndex !== index)
+                  );
+                }}
+              />
+
+              <input
+                type="hidden"
+                name="referenceImageUrls"
+                value={JSON.stringify(referenceImageUrls)}
+              />
+            </div>
 
             <label className="flex gap-4 rounded-2xl border border-white/20 bg-white/10 p-5 text-lg font-medium leading-relaxed text-white/85">
-              <input name="legalAge" value="yes" type="checkbox" className="mt-2" />
+              <input
+                name="legalAge"
+                value="yes"
+                type="checkbox"
+                className="mt-2"
+              />
+
               <span>
-                I confirm that I am an adult of legal age, 19+ based on international age.
+                I confirm that I am an adult of legal age, 19+ based on
+                international age.
               </span>
             </label>
 
@@ -418,7 +571,8 @@ export default function Home() {
 
             {error && (
               <p className="rounded-2xl border border-red-400/30 bg-red-500/10 p-5 text-center text-lg font-semibold text-red-200">
-                Something went wrong. Please try again or contact me on Instagram.
+                Something went wrong. Please try again or contact me on
+                Instagram.
               </p>
             )}
 

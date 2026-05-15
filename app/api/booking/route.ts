@@ -2,62 +2,85 @@ import { Resend } from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-async function fileToBase64(file: File) {
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+function safeText(value: FormDataEntryValue | null) {
+  return value ? String(value) : "";
+}
 
-  return buffer.toString("base64");
+function formatLinks(urls: string[]) {
+  if (!urls.length) {
+    return "<p>No reference images uploaded.</p>";
+  }
+
+  return `
+    <ul>
+      ${urls
+        .map(
+          (url, index) => `
+            <li>
+              <a href="${url}" target="_blank">
+                Reference Image ${index + 1}
+              </a>
+              <br />
+              ${url}
+            </li>
+          `
+        )
+        .join("")}
+    </ul>
+  `;
 }
 
 export async function POST(request: Request) {
   try {
     const formData = await request.formData();
 
-    const firstName = formData.get("firstName");
-    const lastName = formData.get("lastName");
-    const dateOfBirth = formData.get("dateOfBirth");
-    const phone = formData.get("phone");
-    const email = formData.get("email");
-    const instagram = formData.get("instagram");
-    const currentCity = formData.get("currentCity");
+    const firstName = safeText(formData.get("firstName"));
+    const lastName = safeText(formData.get("lastName"));
 
-    const firstDate = formData.get("firstDate");
-    const firstTime = formData.get("firstTime");
-    const firstAmPm = formData.get("firstAmPm");
+    const birthDay = safeText(formData.get("birthDay"));
+    const birthMonth = safeText(formData.get("birthMonth"));
+    const birthYear = safeText(formData.get("birthYear"));
 
-    const secondDate = formData.get("secondDate");
-    const secondTime = formData.get("secondTime");
-    const secondAmPm = formData.get("secondAmPm");
+    const phone = safeText(formData.get("phone"));
+    const email = safeText(formData.get("email"));
+    const instagram = safeText(formData.get("instagram"));
+    const currentCity = safeText(formData.get("currentCity"));
 
-    const thirdDate = formData.get("thirdDate");
-    const thirdTime = formData.get("thirdTime");
-    const thirdAmPm = formData.get("thirdAmPm");
+    const firstDate = safeText(formData.get("firstDate"));
+    const firstTime = safeText(formData.get("firstTime"));
+    const firstAmPm = safeText(formData.get("firstAmPm"));
 
-    const placement = formData.get("placement");
-    const expectedSize = formData.get("expectedSize");
-    const designDescription = formData.get("designDescription");
-    const legalAge = formData.get("legalAge");
+    const secondDate = safeText(formData.get("secondDate"));
+    const secondTime = safeText(formData.get("secondTime"));
+    const secondAmPm = safeText(formData.get("secondAmPm"));
 
-    const placementPhoto = formData.get("placementPhoto") as File | null;
-    const referenceImages = formData.getAll("referenceImages") as File[];
+    const thirdDate = safeText(formData.get("thirdDate"));
+    const thirdTime = safeText(formData.get("thirdTime"));
+    const thirdAmPm = safeText(formData.get("thirdAmPm"));
 
-    const attachments = [];
+    const placement = safeText(formData.get("placement"));
+    const expectedSize = safeText(formData.get("expectedSize"));
+    const designDescription = safeText(formData.get("designDescription"));
 
-    if (placementPhoto && placementPhoto.size > 0) {
-      attachments.push({
-        filename: `PLACEMENT_${placementPhoto.name}`,
-        content: await fileToBase64(placementPhoto),
-      });
-    }
+    const placementPhotoUrl = safeText(formData.get("placementPhotoUrl"));
+    const referenceImageUrlsRaw = safeText(formData.get("referenceImageUrls"));
 
-    for (const image of referenceImages) {
-      if (image && image.size > 0) {
-        attachments.push({
-          filename: `REFERENCE_${image.name}`,
-          content: await fileToBase64(image),
-        });
+    let referenceImageUrls: string[] = [];
+
+    try {
+      const parsed = JSON.parse(referenceImageUrlsRaw || "[]");
+
+      if (Array.isArray(parsed)) {
+        referenceImageUrls = parsed.filter((url) => typeof url === "string");
       }
+    } catch {
+      referenceImageUrls = [];
     }
+
+    const legalAge = safeText(formData.get("legalAge"));
+
+    console.log("PLACEMENT PHOTO URL:", placementPhotoUrl);
+    console.log("REFERENCE IMAGE URLS:", referenceImageUrls);
 
     const result = await resend.emails.send({
       from: "RI:AN Booking <onboarding@resend.dev>",
@@ -68,7 +91,7 @@ export async function POST(request: Request) {
 
         <h2>Client Info</h2>
         <p><b>Name:</b> ${firstName} ${lastName}</p>
-        <p><b>Date of Birth:</b> ${dateOfBirth}</p>
+        <p><b>Date of Birth:</b> ${birthDay}/${birthMonth}/${birthYear}</p>
         <p><b>Phone:</b> ${phone}</p>
         <p><b>Email:</b> ${email}</p>
         <p><b>Instagram:</b> ${instagram}</p>
@@ -85,10 +108,29 @@ export async function POST(request: Request) {
         <p><b>Design Description:</b></p>
         <p>${designDescription}</p>
 
+        <h2>Uploaded Images</h2>
+
+        <p><b>Placement Photo:</b></p>
+        ${
+          placementPhotoUrl
+            ? `
+              <p>
+                <a href="${placementPhotoUrl}" target="_blank">
+                  Open Placement Photo
+                </a>
+                <br />
+                ${placementPhotoUrl}
+              </p>
+            `
+            : "<p>No placement photo uploaded.</p>"
+        }
+
+        <p><b>Reference Images:</b></p>
+        ${formatLinks(referenceImageUrls)}
+
         <h2>Confirmation</h2>
         <p><b>Legal Age Confirmed:</b> ${legalAge ? "Yes" : "No"}</p>
       `,
-      attachments,
     });
 
     console.log("RESEND RESULT:", result);
@@ -98,7 +140,10 @@ export async function POST(request: Request) {
     console.error(error);
 
     return Response.json(
-      { success: false, message: "Failed to send booking request." },
+      {
+        success: false,
+        message: "Failed to send booking request.",
+      },
       { status: 500 }
     );
   }
