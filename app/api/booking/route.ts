@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { supabase } from "@/lib/supabase";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -18,7 +19,9 @@ function formatLinks(urls: string[]) {
         .map(
           (url, index) => `
             <li>
-              <a href="${url}" target="_blank">Reference Image ${index + 1}</a>
+              <a href="${url}" target="_blank">
+                Reference Image ${index + 1}
+              </a>
               <br />
               ${url}
             </li>
@@ -61,15 +64,23 @@ export async function POST(request: Request) {
     const expectedSize = safeText(formData.get("expectedSize"));
     const designDescription = safeText(formData.get("designDescription"));
 
-    const placementPhotoUrl = safeText(formData.get("placementPhotoUrl"));
-    const referenceImageUrlsRaw = safeText(formData.get("referenceImageUrls"));
+    const placementPhotoUrl = safeText(
+      formData.get("placementPhotoUrl")
+    );
+
+    const referenceImageUrlsRaw = safeText(
+      formData.get("referenceImageUrls")
+    );
 
     let referenceImageUrls: string[] = [];
 
     try {
       const parsed = JSON.parse(referenceImageUrlsRaw || "[]");
+
       if (Array.isArray(parsed)) {
-        referenceImageUrls = parsed.filter((url) => typeof url === "string");
+        referenceImageUrls = parsed.filter(
+          (url) => typeof url === "string"
+        );
       }
     } catch {
       referenceImageUrls = [];
@@ -77,6 +88,22 @@ export async function POST(request: Request) {
 
     const legalAge = safeText(formData.get("legalAge"));
 
+    // SUPABASE SAVE
+    await supabase.from("bookings").insert({
+      first_name: firstName,
+      last_name: lastName,
+      email,
+      phone,
+      current_city: currentCity,
+      placement,
+      expected_size: expectedSize,
+      design_description: designDescription,
+      placement_photo_url: placementPhotoUrl,
+      reference_image_urls: JSON.stringify(referenceImageUrls),
+      status: "new",
+    });
+
+    // OWNER EMAIL
     await resend.emails.send({
       from: FROM_EMAIL,
       to: OWNER_EMAIL,
@@ -85,33 +112,63 @@ export async function POST(request: Request) {
         <h1>New Tattoo Booking Request</h1>
 
         <h2>Client Info</h2>
+
         <p><b>Name:</b> ${firstName} ${lastName}</p>
-        <p><b>Date of Birth:</b> ${birthDay}/${birthMonth}/${birthYear}</p>
+
+        <p>
+          <b>Date of Birth:</b>
+          ${birthDay}/${birthMonth}/${birthYear}
+        </p>
+
         <p><b>Phone:</b> ${phone}</p>
+
         <p><b>Email:</b> ${email}</p>
+
         <p><b>Instagram:</b> ${instagram}</p>
+
         <p><b>Current City:</b> ${currentCity}</p>
 
         <h2>Preferred Date & Time</h2>
-        <p><b>1st:</b> ${firstDate} ${firstTime} ${firstAmPm}</p>
-        <p><b>2nd:</b> ${secondDate} ${secondTime} ${secondAmPm}</p>
-        <p><b>3rd:</b> ${thirdDate} ${thirdTime} ${thirdAmPm}</p>
+
+        <p>
+          <b>1st:</b>
+          ${firstDate} ${firstTime} ${firstAmPm}
+        </p>
+
+        <p>
+          <b>2nd:</b>
+          ${secondDate} ${secondTime} ${secondAmPm}
+        </p>
+
+        <p>
+          <b>3rd:</b>
+          ${thirdDate} ${thirdTime} ${thirdAmPm}
+        </p>
 
         <h2>Tattoo Details</h2>
+
         <p><b>Placement:</b> ${placement}</p>
+
         <p><b>Expected Size:</b> ${expectedSize}</p>
+
         <p><b>Design Description:</b></p>
+
         <p>${designDescription}</p>
 
         <h2>Uploaded Images</h2>
 
         <p><b>Placement Photo:</b></p>
+
         ${
           placementPhotoUrl
             ? `
               <p>
-                <a href="${placementPhotoUrl}" target="_blank">Open Placement Photo</a>
+                <a href="${placementPhotoUrl}" target="_blank">
+                  Open Placement Photo
+                </a>
+
                 <br />
+
                 ${placementPhotoUrl}
               </p>
             `
@@ -119,18 +176,25 @@ export async function POST(request: Request) {
         }
 
         <p><b>Reference Images:</b></p>
+
         ${formatLinks(referenceImageUrls)}
 
         <h2>Confirmation</h2>
-        <p><b>Legal Age Confirmed:</b> ${legalAge ? "Yes" : "No"}</p>
+
+        <p>
+          <b>Legal Age Confirmed:</b>
+          ${legalAge ? "Yes" : "No"}
+        </p>
       `,
     });
 
+    // CLIENT EMAIL
     if (email) {
       await resend.emails.send({
         from: FROM_EMAIL,
         to: email,
-        subject: "Your RI:AN tattoo booking request has been received",
+        subject:
+          "Your RI:AN tattoo booking request has been received",
         html: `
           <h1>Thank you for your booking request.</h1>
 
