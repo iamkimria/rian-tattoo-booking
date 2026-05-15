@@ -457,9 +457,9 @@ export default function Home() {
                   }}
                   appearance={{
   button:
-    "ut-ready:bg-white ut-uploading:bg-white/70 text-black font-bold px-6 py-3 rounded-full",
+  "!max-w-full !whitespace-normal !break-words !text-center !text-black !bg-white font-bold px-5 py-3 rounded-full",
                     container:
-                      "rounded-2xl border border-dashed border-white/30 bg-black/30 px-6 py-10",
+  "w-full max-w-full overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-6 text-center md:px-6 md:py-10",
                     allowedContent: "text-white/60",
                   }}
                 />
@@ -521,9 +521,9 @@ export default function Home() {
                 }}
                 appearance={{
   button:
-    "ut-ready:bg-white ut-uploading:bg-white/70 text-black font-bold px-6 py-3 rounded-full",
+  "!max-w-full !whitespace-normal !break-words !text-center !text-black !bg-white font-bold px-5 py-3 rounded-full",
                   container:
-                    "rounded-2xl border border-dashed border-white/30 bg-black/30 px-6 py-10",
+  "w-full max-w-full overflow-hidden rounded-2xl border border-dashed border-white/30 bg-black/30 px-4 py-6 text-center md:px-6 md:py-10",
                   allowedContent: "text-white/60",
                 }}
               />
