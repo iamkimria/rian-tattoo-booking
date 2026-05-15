@@ -251,23 +251,21 @@ function UploadArea({
             alert(`Upload failed: ${uploadError.message}`);
           }}
           appearance={{
-            button:
-              "!h-auto !w-full !max-w-full !rounded-2xl !bg-white !px-5 !py-4 !text-center !text-base !font-bold !text-black hover:!bg-white/90",
-            allowedContent:
-              "!mt-3 !text-center !text-sm !text-white/60",
-            container:
-              "!w-full !max-w-full !border-0 !bg-transparent !p-0",
-          }}
-          content={{
-            button({ isUploading }) {
-              return isUploading
-                ? "Uploading..."
-                : "Tap here to upload images";
-            },
-            allowedContent() {
-              return "Images up to 8MB";
-            },
-          }}
+  container: "!w-full",
+  button:
+    "!w-full !rounded-full !bg-white !px-6 !py-4 !text-base !font-bold !text-black hover:!bg-white/90",
+  allowedContent: "!hidden",
+}}
+content={{
+  button({ isUploading }) {
+    return isUploading
+      ? "Uploading..."
+      : "Tap to upload images";
+  },
+  allowedContent() {
+    return "";
+  },
+}}
         />
       </div>
     </div>
