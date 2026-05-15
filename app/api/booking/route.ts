@@ -60,10 +60,17 @@ export async function POST(request: Request) {
 
     const placement = safeText(formData.get("placement"));
     const expectedSize = safeText(formData.get("expectedSize"));
-    const designDescription = safeText(formData.get("designDescription"));
+    const designDescription = safeText(
+      formData.get("designDescription")
+    );
 
-    const placementPhotoUrl = safeText(formData.get("placementPhotoUrl"));
-    const referenceImageUrlsRaw = safeText(formData.get("referenceImageUrls"));
+    const placementPhotoUrl = safeText(
+      formData.get("placementPhotoUrl")
+    );
+
+    const referenceImageUrlsRaw = safeText(
+      formData.get("referenceImageUrls")
+    );
 
     let referenceImageUrls: string[] = [];
 
@@ -71,7 +78,9 @@ export async function POST(request: Request) {
       const parsed = JSON.parse(referenceImageUrlsRaw || "[]");
 
       if (Array.isArray(parsed)) {
-        referenceImageUrls = parsed.filter((url) => typeof url === "string");
+        referenceImageUrls = parsed.filter(
+          (url) => typeof url === "string"
+        );
       }
     } catch {
       referenceImageUrls = [];
@@ -79,10 +88,7 @@ export async function POST(request: Request) {
 
     const legalAge = safeText(formData.get("legalAge"));
 
-    console.log("PLACEMENT PHOTO URL:", placementPhotoUrl);
-    console.log("REFERENCE IMAGE URLS:", referenceImageUrls);
-
-    const result = await resend.emails.send({
+    await resend.emails.send({
       from: "RI:AN Booking <onboarding@resend.dev>",
       to: "iamkimria@gmail.com",
       subject: `New tattoo booking request from ${firstName} ${lastName}`,
@@ -90,27 +96,53 @@ export async function POST(request: Request) {
         <h1>New Tattoo Booking Request</h1>
 
         <h2>Client Info</h2>
+
         <p><b>Name:</b> ${firstName} ${lastName}</p>
-        <p><b>Date of Birth:</b> ${birthDay}/${birthMonth}/${birthYear}</p>
+
+        <p>
+          <b>Date of Birth:</b>
+          ${birthDay}/${birthMonth}/${birthYear}
+        </p>
+
         <p><b>Phone:</b> ${phone}</p>
+
         <p><b>Email:</b> ${email}</p>
+
         <p><b>Instagram:</b> ${instagram}</p>
+
         <p><b>Current City:</b> ${currentCity}</p>
 
         <h2>Preferred Date & Time</h2>
-        <p><b>1st:</b> ${firstDate} ${firstTime} ${firstAmPm}</p>
-        <p><b>2nd:</b> ${secondDate} ${secondTime} ${secondAmPm}</p>
-        <p><b>3rd:</b> ${thirdDate} ${thirdTime} ${thirdAmPm}</p>
+
+        <p>
+          <b>1st:</b>
+          ${firstDate} ${firstTime} ${firstAmPm}
+        </p>
+
+        <p>
+          <b>2nd:</b>
+          ${secondDate} ${secondTime} ${secondAmPm}
+        </p>
+
+        <p>
+          <b>3rd:</b>
+          ${thirdDate} ${thirdTime} ${thirdAmPm}
+        </p>
 
         <h2>Tattoo Details</h2>
+
         <p><b>Placement:</b> ${placement}</p>
+
         <p><b>Expected Size:</b> ${expectedSize}</p>
+
         <p><b>Design Description:</b></p>
+
         <p>${designDescription}</p>
 
         <h2>Uploaded Images</h2>
 
         <p><b>Placement Photo:</b></p>
+
         ${
           placementPhotoUrl
             ? `
@@ -118,7 +150,9 @@ export async function POST(request: Request) {
                 <a href="${placementPhotoUrl}" target="_blank">
                   Open Placement Photo
                 </a>
+
                 <br />
+
                 ${placementPhotoUrl}
               </p>
             `
@@ -126,14 +160,49 @@ export async function POST(request: Request) {
         }
 
         <p><b>Reference Images:</b></p>
+
         ${formatLinks(referenceImageUrls)}
 
         <h2>Confirmation</h2>
-        <p><b>Legal Age Confirmed:</b> ${legalAge ? "Yes" : "No"}</p>
+
+        <p>
+          <b>Legal Age Confirmed:</b>
+          ${legalAge ? "Yes" : "No"}
+        </p>
       `,
     });
 
-    console.log("RESEND RESULT:", result);
+    if (email) {
+      await resend.emails.send({
+        from: "RI:AN Booking <onboarding@resend.dev>",
+        to: email,
+        subject:
+          "Your RI:AN tattoo booking request has been received",
+        html: `
+          <h1>Thank you for your booking request.</h1>
+
+          <p>Hi ${firstName},</p>
+
+          <p>
+            Thank you for your interest in my work.
+            I have received your tattoo booking request and will review your idea carefully.
+          </p>
+
+          <p>
+            Please note that your booking is not confirmed until the deposit is received.
+          </p>
+
+          <p>
+            I’ll get back to you as soon as possible with more details.
+          </p>
+
+          <p>
+            Warmly,<br />
+            RI:AN
+          </p>
+        `,
+      });
+    }
 
     return Response.json({ success: true });
   } catch (error) {
