@@ -390,6 +390,7 @@ export default function BookingPage() {
               Please fill out this form carefully. I’ll get back to you as soon
               as possible.
             </p>
+            <div className="mx-auto mt-10 h-px w-full max-w-3xl bg-white/10" />
 
             <div className="mt-8 text-center">
               <p className="mb-4 text-base font-bold tracking-[0.12em] text-white/75">
@@ -403,7 +404,13 @@ export default function BookingPage() {
               </p>
             </div>
           </div>
-
+<div className="mb-10 rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-center">
+  <p className="text-base font-medium leading-relaxed text-white/70">
+    Each tattoo is custom designed for every client.
+    <br />
+    Please describe your idea as carefully as possible.
+  </p>
+</div>
           <form onSubmit={handleSubmit} className="space-y-7">
             <div className="grid gap-7 md:grid-cols-2">
               <Field required label="FIRST NAME *" name="firstName" placeholder="First name" />

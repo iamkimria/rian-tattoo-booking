@@ -16,6 +16,7 @@ export default function Home() {
   }
 
   return (
+    
     <main
       className={`min-h-screen bg-black text-white transition-all duration-700 ${
         leaving ? "opacity-0 blur-sm" : "opacity-100 blur-0"
@@ -52,7 +53,7 @@ export default function Home() {
             <button
               type="button"
               onClick={goToBooking}
-              className="w-full rounded-full bg-white px-8 py-4 text-center text-base font-bold tracking-[0.12em] text-black transition hover:bg-white/80 sm:w-auto"
+              className="w-full rounded-full bg-white px-8 py-4 text-center text-base font-bold tracking-[0.12em] text-black transition duration-300 hover:scale-[1.02] hover:bg-white/80"
             >
               BOOK NOW
             </button>
@@ -61,13 +62,18 @@ export default function Home() {
               href="https://www.instagram.com/tattooist_rian"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full rounded-full border border-white/60 px-8 py-4 text-center text-base font-bold tracking-[0.12em] text-white transition hover:border-white hover:bg-white/10 sm:w-auto"
+              className="w-full rounded-full border border-white/60 px-8 py-4 text-center text-base font-bold tracking-[0.12em] text-white transition duration-300 hover:scale-[1.02] hover:border-white hover:bg-white/10"
             >
               VIEW ON INSTAGRAM
             </a>
           </div>
         </div>
       </section>
+      <footer className="border-t border-white/10 px-6 py-8 text-center">
+  <p className="text-sm font-medium tracking-[0.08em] text-white/40">
+    © 2026 RI:AN. All rights reserved.
+  </p>
+</footer>
     </main>
   );
 }
