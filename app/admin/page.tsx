@@ -24,6 +24,25 @@ async function deleteBooking(formData: FormData) {
   revalidatePath("/admin");
 }
 
+async function updateStatus(formData: FormData) {
+  "use server";
+
+  const id = formData.get("id");
+  const status = formData.get("status");
+
+  const adminSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+
+  await adminSupabase
+    .from("bookings")
+    .update({ status })
+    .eq("id", id);
+
+  revalidatePath("/admin");
+}
+
 function parseReferenceUrls(value: string | null) {
   if (!value) return [];
 
@@ -32,6 +51,30 @@ function parseReferenceUrls(value: string | null) {
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
+  }
+}
+function getStatusStyle(status: string) {
+  switch (status) {
+    case "NEW":
+      return "bg-blue-500/20 text-blue-200 border-blue-400/20";
+
+    case "REPLIED":
+      return "bg-yellow-500/20 text-yellow-200 border-yellow-400/20";
+
+    case "WAITING DEPOSIT":
+      return "bg-orange-500/20 text-orange-200 border-orange-400/20";
+
+    case "CONFIRMED":
+      return "bg-green-500/20 text-green-200 border-green-400/20";
+
+    case "DONE":
+      return "bg-purple-500/20 text-purple-200 border-purple-400/20";
+
+    case "CANCELLED":
+      return "bg-red-500/20 text-red-200 border-red-400/20";
+
+    default:
+      return "bg-white/10 text-white/70 border-white/10";
   }
 }
 
@@ -73,9 +116,31 @@ export default async function AdminPage() {
                 </h2>
 
                 <div className="flex items-center gap-3">
-                  <span className="rounded-full bg-white/10 px-4 py-2 text-sm font-bold uppercase tracking-[0.12em] text-white/70">
-                    {booking.status}
-                  </span>
+                  <div className="flex flex-wrap items-center gap-2">
+  {[
+    "NEW",
+    "REPLIED",
+    "WAITING DEPOSIT",
+    "CONFIRMED",
+    "DONE",
+    "CANCELLED",
+  ].map((status) => (
+    <form key={status} action={updateStatus}>
+      <input type="hidden" name="id" value={booking.id} />
+
+      <input type="hidden" name="status" value={status} />
+
+      <button
+        type="submit"
+        className={`rounded-full border px-3 py-2 text-xs font-bold tracking-[0.08em] transition hover:scale-[1.03] ${getStatusStyle(
+          booking.status === status ? status : ""
+        )}`}
+      >
+        {status}
+      </button>
+    </form>
+  ))}
+</div>
 
                   <form action={deleteBooking}>
                     <input type="hidden" name="id" value={booking.id} />
