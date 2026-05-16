@@ -375,8 +375,8 @@ export default function BookingPage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <section id="booking" className="bg-zinc-950 px-6 py-24">
-        <div className="mx-auto max-w-4xl">
+      <section id="booking" className="bg-[#181818] px-6 py-24">
+        <div className="mx-auto max-w-3xl">
           <div className="mb-12 text-center">
             <p className="mb-4 text-base font-semibold tracking-[0.25em] text-white/80">
               BOOKING REQUEST
