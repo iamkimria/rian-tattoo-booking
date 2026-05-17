@@ -573,6 +573,18 @@ export default function BookingPage() {
               >
                 {loading ? "SENDING..." : "SEND BOOKING REQUEST"}
               </button>
+
+
+              <p className="mt-6 text-center text-sm leading-relaxed text-white/40">
+  By submitting this form, you agree to the{" "}
+  <a
+    href="/privacy"
+    className="underline underline-offset-4 transition hover:text-white"
+  >
+    Privacy Policy
+  </a>
+  .
+</p>
             </div>
           </form>
         </div>

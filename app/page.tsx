@@ -70,9 +70,18 @@ export default function Home() {
         </div>
       </section>
       <footer className="border-t border-white/10 px-6 py-8 text-center">
-  <p className="text-sm font-medium tracking-[0.08em] text-white/40">
-    © 2026 RI:AN. All rights reserved.
-  </p>
+  <div className="flex items-center justify-center gap-3 text-sm text-white/40">
+  <p>© 2026 RI:AN. All rights reserved.</p>
+
+  <span>·</span>
+
+  <a
+    href="/privacy"
+    className="transition hover:text-white"
+  >
+    Privacy Policy
+  </a>
+</div>
 </footer>
     </main>
   );
