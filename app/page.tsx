@@ -70,11 +70,11 @@ export default function Home() {
         </div>
       </section>
       <footer className="border-t border-white/10 px-6 py-8 text-center">
-  <div className="flex flex-col items-center gap-3 text-sm text-white/40">
+  <div className="flex flex-col items-center gap-3 text-sm text-white/50">
   <div className="flex items-center justify-center gap-3">
     <a
       href="/privacy"
-      className="transition hover:text-white"
+      className="text-white/70 transition hover:text-white"
     >
       Privacy Policy
     </a>
@@ -83,7 +83,7 @@ export default function Home() {
 
     <a
       href="/faq"
-      className="transition hover:text-white"
+      className="text-white/70 transition hover:text-white"
     >
       FAQ
     </a>
@@ -92,7 +92,7 @@ export default function Home() {
 
     <a
       href="/aftercare"
-      className="transition hover:text-white"
+      className="text-white/70 transition hover:text-white"
     >
       Aftercare
     </a>
