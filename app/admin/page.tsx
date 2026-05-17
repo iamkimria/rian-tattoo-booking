@@ -68,7 +68,13 @@ export default async function AdminPage() {
   }
 
   return (
-    <main className="min-h-screen bg-black p-6 text-white font-sans md:p-10">
+  <main
+    className="min-h-screen bg-black p-6 text-white md:p-10"
+    style={{
+      fontFamily:
+        "-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif",
+    }}
+  >
       <h1 className="mb-10 text-4xl font-bold tracking-[0.1em]">
         BOOKINGS
       </h1>
