@@ -57,11 +57,11 @@ export default function Home() {
               BOOK NOW
             </button>
 
-           <a
+            <a
   href="https://instagram.com/tattooist_rian"
   target="_blank"
   rel="noopener noreferrer"
-  className="text-sm tracking-[0.08em] text-white/60 transition hover:text-white"
+  className="rounded-full border border-white/15 px-6 py-3 text-sm font-medium tracking-[0.08em] text-white/80 transition hover:border-white/40 hover:text-white"
 >
   View on Instagram
 </a>
