@@ -81,6 +81,15 @@ export default function Home() {
   >
     Privacy Policy
   </a>
+<span>·</span>
+
+<a
+  href="/faq"
+  className="transition hover:text-white"
+>
+  FAQ
+</a>
+
 </div>
 </footer>
     </main>
