@@ -1,11 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+
+
 
 function getStatusStyle(status: string) {
   switch (status) {
-    case "NEW":
-      return "bg-blue-500/20 text-blue-200 border-blue-400/20";
+    
     case "REPLIED":
       return "bg-yellow-500/20 text-yellow-200 border-yellow-400/20";
     case "WAITING DEPOSIT":
@@ -96,7 +97,7 @@ export default function BookingCard({
       <div className="mt-6 border-t border-white/10 pt-6">
         <div className="mb-6 flex flex-wrap gap-2">
           {[
-            "NEW",
+        
             "REPLIED",
             "WAITING DEPOSIT",
             "CONFIRMED",
