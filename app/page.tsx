@@ -40,9 +40,9 @@ export default function Home() {
             WATERCOLOR TATTOO ARTIST
           </p>
 
-          <h1 className="font-editorial mb-6 text-6xl font-semibold tracking-[0.08em] md:text-8xl">
-            RI:AN
-          </h1>
+          <h1 className="mb-6 text-6xl font-semibold tracking-[0.12em] md:text-8xl">
+  RI:AN
+</h1>
 
           <p className="mb-10 text-lg font-medium leading-relaxed text-white/70 md:text-xl">
             Inspired by movement, emotion, and flowing color.

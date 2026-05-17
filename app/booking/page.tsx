@@ -386,10 +386,10 @@ export default function BookingPage() {
               BOOKING FORM
             </h1>
 
-            <p className="mx-auto max-w-2xl text-xl font-medium leading-relaxed text-white/85">
-              Please fill out this form carefully. I’ll get back to you as soon
-              as possible.
-            </p>
+            <p className="mx-auto max-w-2xl text-lg font-medium leading-relaxed text-white/75">
+  Please fill out this form carefully. I’ll get back to you as soon
+  as possible.
+</p>
             <div className="mx-auto mt-10 h-px w-full max-w-3xl bg-white/10" />
 
             <div className="mt-8 text-center">
@@ -497,7 +497,7 @@ export default function BookingPage() {
               required
               label="EXPECTED SIZE *"
               name="expectedSize"
-              placeholder="Example: 10cm, 15cm, palm size..."
+              placeholder="ex : 10cm x 15cm"
             />
 
             <TextArea
