@@ -89,7 +89,14 @@ export default function Home() {
 >
   FAQ
 </a>
+<span>·</span>
 
+<a
+  href="/aftercare"
+  className="transition hover:text-white"
+>
+  Aftercare
+</a>
 </div>
 </footer>
     </main>
