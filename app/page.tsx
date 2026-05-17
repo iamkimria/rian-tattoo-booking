@@ -82,7 +82,7 @@ export default function Home() {
             "/works/7.jpg",
             "/works/8.jpg",
             "/works/9.jpg",
-            "/works/10.jpg",
+           
           ].map((src, index) => (
             <a
               key={index}
@@ -92,10 +92,10 @@ export default function Home() {
               className="group relative block overflow-hidden rounded-2xl"
             >
               <img
-                src={src}
-                alt={`RI:AN tattoo work ${index + 1}`}
-className="h-[320px] w-[240px] object-cover grayscale-[40%] brightness-90 transition duration-500 ease-out group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:brightness-100"              />
-
+  src={src}
+  alt={`RI:AN tattoo work ${index + 1}`}
+  className="h-[320px] w-[240px] object-cover brightness-95 transition duration-500 ease-out group-hover:scale-[1.03] group-hover:brightness-100"
+/>
               <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-500 group-hover:opacity-100">
                 <span className="rounded-full border border-white/30 bg-black/30 px-5 py-2 text-sm tracking-[0.12em] text-white backdrop-blur-sm">
                   VIEW
