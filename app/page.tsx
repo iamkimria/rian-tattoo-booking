@@ -40,14 +40,13 @@ export default function Home() {
             WATERCOLOR TATTOO ARTIST
           </p>
 
-          <h1 className="mb-6 text-6xl font-semibold tracking-[0.12em] md:text-8xl">
+          <h1 className="font-editorial mb-6 text-6xl font-semibold tracking-[0.08em] md:text-8xl">
             RI:AN
           </h1>
 
-          <p className="mb-10 text-xl font-medium leading-relaxed text-white/90 md:text-2xl">
-            Delicate watercolor tattoos inspired by emotion, movement, and
-            flowing color.
-          </p>
+          <p className="mb-10 text-lg font-medium leading-relaxed text-white/70 md:text-xl">
+            Inspired by movement, emotion, and flowing color.
+         </p>
 
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <button
