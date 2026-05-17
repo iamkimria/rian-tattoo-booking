@@ -2,13 +2,13 @@ export default function FAQPage() {
   return (
     <main className="min-h-screen bg-black px-6 py-24 text-white">
       <div className="mx-auto max-w-3xl">
-        <h1 className="mb-14 text-5xl font-bold tracking-[0.08em]">
+        <h1 className="font-editorial mb-14 text-6xl font-semibold tracking-[0.04em]">
           FAQ
         </h1>
 
         <div className="space-y-14 text-lg text-white/85">
           <div>
-            <h2 className="mb-4 text-2xl font-semibold text-white">
+            <h2 className="font-editorial mb-4 text-3xl font-semibold text-white">
               Deposit
             </h2>
 
@@ -20,7 +20,7 @@ export default function FAQPage() {
           </div>
 
           <div>
-            <h2 className="mb-4 text-2xl font-semibold text-white">
+           <h2 className="font-editorial mb-4 text-3xl font-semibold text-white">
               Design Process
             </h2>
 
@@ -32,7 +32,7 @@ export default function FAQPage() {
           </div>
 
           <div>
-            <h2 className="mb-4 text-2xl font-semibold text-white">
+            <h2 className="font-editorial mb-4 text-3xl font-semibold text-white">
               Revisions
             </h2>
 
@@ -45,7 +45,7 @@ export default function FAQPage() {
           </div>
 
           <div>
-            <h2 className="mb-4 text-2xl font-semibold text-white">
+            <h2 className="font-editorial mb-4 text-3xl font-semibold text-white">
               Watercolor Tattoos
             </h2>
 
@@ -58,7 +58,7 @@ export default function FAQPage() {
           </div>
 
           <div>
-            <h2 className="mb-4 text-2xl font-semibold text-white">
+            <h2 className="font-editorial mb-4 text-3xl font-semibold text-white">
               Language
             </h2>
 
