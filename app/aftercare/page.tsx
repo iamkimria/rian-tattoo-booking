@@ -9,7 +9,7 @@ export default function AftercarePage() {
         <div className="space-y-16 text-lg text-white/85">
           <div>
             <h2 className="mb-5 text-2xl font-semibold text-white">
-              🩹 Removing the Second Skin Film
+             Removing the Second Skin Film
             </h2>
 
             <div className="space-y-5 leading-8">
@@ -50,7 +50,7 @@ export default function AftercarePage() {
 
           <div>
             <h2 className="mb-5 text-2xl font-semibold text-white">
-              💧 After Removing the Film
+             After Removing the Film
             </h2>
 
             <div className="space-y-5 leading-8">
@@ -110,7 +110,7 @@ export default function AftercarePage() {
 
           <div>
             <h2 className="mb-5 text-2xl font-semibold text-white">
-              🌤 After It’s Fully Healed
+               After It’s Fully Healed
             </h2>
 
             <div className="space-y-5 leading-8">
