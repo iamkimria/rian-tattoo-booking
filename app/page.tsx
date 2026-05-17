@@ -68,6 +68,44 @@ export default function Home() {
           </div>
         </div>
       </section>
+            
+
+      <section className="overflow-x-auto border-t border-white/10 bg-black py-10">
+        <div className="flex w-max gap-4 px-6">
+          {[
+            "/works/1.jpg",
+            "/works/2.jpg",
+            "/works/3.jpg",
+            "/works/4.jpg",
+            "/works/5.jpg",
+            "/works/6.jpg",
+            "/works/7.jpg",
+            "/works/8.jpg",
+            "/works/9.jpg",
+            "/works/10.jpg",
+          ].map((src, index) => (
+            <a
+              key={index}
+              href="https://instagram.com/tattooist_rian"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group relative block overflow-hidden rounded-2xl"
+            >
+              <img
+                src={src}
+                alt={`RI:AN tattoo work ${index + 1}`}
+className="h-[320px] w-[240px] object-cover grayscale-[40%] brightness-90 transition duration-500 ease-out group-hover:scale-[1.03] group-hover:grayscale-0 group-hover:brightness-100"              />
+
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition duration-500 group-hover:opacity-100">
+                <span className="rounded-full border border-white/30 bg-black/30 px-5 py-2 text-sm tracking-[0.12em] text-white backdrop-blur-sm">
+                  VIEW
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
       <footer className="border-t border-white/10 px-6 py-8 text-center">
   <div className="flex flex-col items-center gap-3 text-sm text-white/50">
   <div className="flex items-center justify-center gap-3">
