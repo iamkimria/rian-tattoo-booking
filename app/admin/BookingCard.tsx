@@ -149,36 +149,46 @@ export default function BookingCard({
         </div>
 
         <div className="mt-6 space-y-3">
-          {booking.placement_photo_url && (
-            <a
-              href={booking.placement_photo_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block underline underline-offset-4"
-            >
-              Open Placement Photo
-            </a>
-          )}
+         {booking.placement_photo_url && (
+  <div>
+    <p className="mb-3 font-bold">Placement Photo</p>
+
+    <a
+      href={booking.placement_photo_url}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <img
+        src={booking.placement_photo_url}
+        alt="Placement"
+        className="h-32 w-32 rounded-2xl object-cover transition hover:scale-[1.03]"
+      />
+    </a>
+  </div>
+)}
 
           {referenceUrls.length > 0 && (
-            <div>
-              <p className="mb-2 font-bold">Reference Images</p>
+  <div>
+    <p className="mb-2 font-bold">Reference Images</p>
 
-              <div className="space-y-2">
-                {referenceUrls.map((url: string, index: number) => (
-                  <a
-                    key={url}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block underline underline-offset-4"
-                  >
-                    Open Reference Image {index + 1}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+    <div className="flex flex-wrap gap-3">
+      {referenceUrls.map((url: string, index: number) => (
+        <a
+          key={url}
+          href={url}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img
+            src={url}
+            alt={`Reference ${index + 1}`}
+            className="h-24 w-24 rounded-2xl object-cover transition hover:scale-[1.03]"
+          />
+        </a>
+      ))}
+    </div>
+  </div>
+)}
         </div>
       </div>
     </details>
