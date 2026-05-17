@@ -70,33 +70,35 @@ export default function Home() {
         </div>
       </section>
       <footer className="border-t border-white/10 px-6 py-8 text-center">
-  <div className="flex items-center justify-center gap-3 text-sm text-white/40">
+  <div className="flex flex-col items-center gap-3 text-sm text-white/40">
+  <div className="flex items-center justify-center gap-3">
+    <a
+      href="/privacy"
+      className="transition hover:text-white"
+    >
+      Privacy Policy
+    </a>
+
+    <span>·</span>
+
+    <a
+      href="/faq"
+      className="transition hover:text-white"
+    >
+      FAQ
+    </a>
+
+    <span>·</span>
+
+    <a
+      href="/aftercare"
+      className="transition hover:text-white"
+    >
+      Aftercare
+    </a>
+  </div>
+
   <p>© 2026 RI:AN. All rights reserved.</p>
-
-  <span>·</span>
-
-  <a
-    href="/privacy"
-    className="transition hover:text-white"
-  >
-    Privacy Policy
-  </a>
-<span>·</span>
-
-<a
-  href="/faq"
-  className="transition hover:text-white"
->
-  FAQ
-</a>
-<span>·</span>
-
-<a
-  href="/aftercare"
-  className="transition hover:text-white"
->
-  Aftercare
-</a>
 </div>
 </footer>
     </main>
