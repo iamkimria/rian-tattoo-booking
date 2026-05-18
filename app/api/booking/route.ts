@@ -89,19 +89,37 @@ export async function POST(request: Request) {
     const legalAge = safeText(formData.get("legalAge"));
 
     // SUPABASE SAVE
-    await supabase.from("bookings").insert({
-      first_name: firstName,
-      last_name: lastName,
-      email,
-      phone,
-      current_city: currentCity,
-      placement,
-      expected_size: expectedSize,
-      design_description: designDescription,
-      placement_photo_url: placementPhotoUrl,
-      reference_image_urls: JSON.stringify(referenceImageUrls),
-      status: "new",
-    });
+const { data, error } = await supabase
+  .from("bookings")
+  .insert({
+    first_name: firstName,
+    last_name: lastName,
+    email,
+    phone,
+    current_city: currentCity,
+
+    first_date: firstDate,
+    first_time: firstTime,
+    first_ampm: firstAmPm,
+
+    second_date: secondDate,
+    second_time: secondTime,
+    second_ampm: secondAmPm,
+
+    third_date: thirdDate,
+    third_time: thirdTime,
+    third_ampm: thirdAmPm,
+
+    placement,
+    expected_size: expectedSize,
+    design_description: designDescription,
+    placement_photo_url: placementPhotoUrl,
+    reference_image_urls: JSON.stringify(referenceImageUrls),
+    status: "new",
+  });
+
+console.log(data);
+console.log(error);
 
     // OWNER EMAIL
     await resend.emails.send({

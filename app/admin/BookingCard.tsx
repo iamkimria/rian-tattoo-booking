@@ -136,7 +136,30 @@ export default function BookingCard({
           <p><b>City:</b> {booking.current_city}</p>
           <p><b>Size:</b> {booking.expected_size}</p>
         </div>
+<div className="mt-6">
+  <p className="mb-2 font-bold">Preferred Date & Time</p>
 
+  <div className="space-y-2 text-white/80">
+    <p>
+      <b>1st:</b> {booking.first_date} {booking.first_time}{" "}
+      {booking.first_ampm}
+    </p>
+
+    {(booking.second_date || booking.second_time || booking.second_ampm) && (
+      <p>
+        <b>2nd:</b> {booking.second_date} {booking.second_time}{" "}
+        {booking.second_ampm}
+      </p>
+    )}
+
+    {(booking.third_date || booking.third_time || booking.third_ampm) && (
+      <p>
+        <b>3rd:</b> {booking.third_date} {booking.third_time}{" "}
+        {booking.third_ampm}
+      </p>
+    )}
+  </div>
+</div>
         <div className="mt-6">
           <p className="mb-2 font-bold">Placement</p>
           <p className="text-white/80">{booking.placement}</p>
